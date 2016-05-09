@@ -54,20 +54,18 @@ xp::RexFile* xp::RexIO::loadFile(std::string const& filename) {
 
 		for (unsigned int layer = 0; layer < layers; layer++) {
 			//Read and throw away the repeated layer and width data
-
 			if (!firstread) { //this logic is SO FUCKING KLUDGY
 				readInt();
 				readInt();
 			}
 			else { firstread = false; }
 
-			for (unsigned int x = 0; x < width; x++)
-				for (unsigned int y = 0; y < height; y++)
-				{
-					RexTile* tile = &xp->layers[layer]->tiles[x + (y * width)];
-					gzread(gz, buffer, bufferLen);
-					memcpy(tile, buffer, bufferLen);
+			for (unsigned int x = 0; x < width; x++) {
+				for (unsigned int y = 0; y < height; y++) {
+					xp::RexTile* tile = &xp->layers[layer]->tiles[x + (y * width)];
+					gzread(gz, tile, bufferLen);
 				}
+			}
 		}
 		return xp;
 	}
