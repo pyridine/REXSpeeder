@@ -6,6 +6,7 @@ static gzFile gz;
 static int readInt() {
 	int value = 0;
 	Byte buffer[4];
+
 	/*TODO: why can't I gzread(in,&value,4) ? */
 	/*TODO: Careful where you use this and not an unsigned 
 	        int reader (could just cast I guess)*/
@@ -13,10 +14,12 @@ static int readInt() {
 	gzread(gz, buffer, 4);
 
 	//TODO: WHAT???? IS THIS?
+	
 	value = (value << 8) + buffer[3];
 	value = (value << 8) + buffer[2];
 	value = (value << 8) + buffer[1];
 	value = (value << 8) + buffer[0];
+	
 
 	return value;
 }
@@ -65,8 +68,6 @@ xp::RexFile* xp::RexIO::loadFile(std::string const& filename) {
 					gzread(gz, buffer, bufferLen);
 					memcpy(tile, buffer, bufferLen);
 				}
-			offset = 16 + ((10 * width * height) + 8) * (layer + 1);
-			gzseek(gz, offset, SEEK_SET);
 		}
 		return xp;
 	}
@@ -99,7 +100,7 @@ bool xp::RexIO::saveFile(RexFile const& xp, std::string const & filename) {
 			}
 		}
 	}
-
+	  
 	gzflush(gzfile,Z_FULL_FLUSH);
 	gzclose(gz);
 
