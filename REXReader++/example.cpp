@@ -8,11 +8,11 @@ int main(){
 
 	RexIO t;
 	
-	RexFile* fupa = t.loadFile("example.xp");
+	RexFile* fupa = t.loadFile("smile.xp");
 
 	std::cout << "layers: " << fupa->num_layers << " width: " << fupa->width << " height: " << fupa->height << std::endl;
 
-	t.saveFile(*fupa, "ragain.xp");
+	t.saveFile(*fupa, "out.xp");
 
 	return EXIT_SUCCESS;
 }
