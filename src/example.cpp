@@ -1,9 +1,7 @@
-#include <iostream>
-#include <sstream>
-#include "RexPaint.h"
+#include "REXSpeeder.h"
 
 int main(){
-	xp::RexFile nyan("cat.xp");
+	xp::RexFile nyan("..\\..\\cat.xp");
 
 	for (int x = 0; x < nyan.getWidth(); x++) {
 		for (int y = 0; y < nyan.getHeight(); y++) {
@@ -14,7 +12,7 @@ int main(){
 		}
 	}
 
-	nyan.save("tac.xp");
+	nyan.save("..\\..\\cat-edited.xp");
 
 	return EXIT_SUCCESS;
 }

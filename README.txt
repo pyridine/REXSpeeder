@@ -1,0 +1,38 @@
+Thank you for choosing REXSPEEDER!
+
+	
+	
+	Using REXSpeeder with your project:
+	
+	You can either compile REXSpeeder into a library or include the sources right along with your project (for which I will offer no tutorial). The latter is a lot easier, but if you don't want to clutter up your sources with third-party sources, I reccommend building the library.
+	
+	Requires the zlib library to build, and is known to work with zlib 1.2.8.
+	
+		WINDOWS
+			First, You will need to direct the solution to a zlib library. You can get one from http://www.zlib.net/ , and you want the "compiled DLL" version. Download it and extract it to some directory. 
+			
+			Here's how to tell the Visual Studio project where the zlib library is:
+			
+				First, open REXSpeeder.sln in the VisualStudio\ directory.
+			
+				From Visual Studio, under "Solution Explorer", right click on REXSpeeder and at the bottom of the menu click "Properties".
+					1. Navigate to C/C++ -> General.
+						You'll see that Additional Include Directories is set to
+						"C:\Development\Libs\zlib128-dll\include;%(AdditionalIncludeDirectories)".
+						Change this to
+						"$(YourZlibDirectory)\zlib128-dll\include;%(AdditionalIncludeDirectories)",
+						where $(YourZlibDirectory) is replaced with the directory you extracted zlib to.
+					2. Navigate to Librarian -> General
+						You'll see that Additional Library Directores is set to
+						"C:\Development\Libs\zlib128-dll\lib;%(AdditionalLibraryDirectories)".
+						Replace this with, you guessed it,
+						"$(YourZlibDirectory)\zlib128-dll\lib;%(AdditionalLibraryDirectories)".
+			
+			Now that all dependencies are referenced, from the "Build" menu at the top of the screen, select Build Solution. REXSpeeder.lib will be built in the bin\ directory.
+			
+			This is a statically linked library, so you'll need to reference the .lib file as well as REXSpeeder.h in the project you want to use REXSpeeder in. See ExampleUsage\VisualStudio for an example in Visual Studio.
+			
+		LINUX (Ubuntu)
+			cd into Makefile and run `make`.
+			You will need the zlib development libraries in order to compile the library.
+			On Ubuntu, you can `sudo apt install zlib1g-dev`

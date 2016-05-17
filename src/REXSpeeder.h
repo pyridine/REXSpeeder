@@ -1,8 +1,6 @@
 #ifndef REX_PAINT_H
 #define REX_PAINT_H
 #include <iostream>
-#include "zlib.h"
-#include "zconf.h"
 
 //As of v1.02, there is a maximum of four layers in an .xp file
 #define REXPAINT_MAX_NUM_LAYERS 4
@@ -11,7 +9,7 @@ namespace xp {
 	typedef unsigned char uchar;
 	typedef unsigned int uint;
 
-	struct RexTile {
+	struct  RexTile {
 		/*This layout matches that of the .xp file*/
 		uint  character;  //Why this is an unsigned int I have no idea
 		uchar fore_red;
@@ -21,8 +19,8 @@ namespace xp {
 		uchar back_green;
 		uchar back_blue;
 		/*WARNING: Despite this layout matching the RexPaint representation,
-		           your compiler will probably pad this out to 12 bytes (4*3)
-				   instead of 10. Anyway, don't count on sizeof == 10.*/
+				   your compiler will probably pad this out to 12 bytes (4*3)
+				   instead of 10. Or something. Anyway, don't count on sizeof == 10.*/
 	};
 
 	struct RexLayer {
@@ -54,6 +52,7 @@ namespace xp {
 
 		RexLayer* layers[REXPAINT_MAX_NUM_LAYERS];
 		inline RexTile* getTile(int layer, int x, int y) { return &layers[layer]->tiles[x + (y * width)]; };
+		inline void setTile(int layer, int x, int y, RexTile& val) { *getTile(layer, x, y) = val; };
 
 	private:
 		RexFile(); //No default constructor.
