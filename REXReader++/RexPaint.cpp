@@ -3,107 +3,85 @@
 /*Each function in this class opens and closes its gzFile, so we can store it statically out here.*/
 static gzFile gz;
 
-static int readInt() {
-	int value = 0;
-	Byte buffer[4];
+xp::RexFile::RexFile(std::string const & filename) {
+	gz = gzopen(filename.c_str(), "rb");
 
-	/*TODO: why can't I gzread(in,&value,4) ? */
-	/*TODO: Careful where you use this and not an unsigned 
-	        int reader (could just cast I guess)*/
-
-	gzread(gz, buffer, 4);
-
-	//TODO: WHAT???? IS THIS?
-	value = (value << 8) + buffer[3];
-	value = (value << 8) + buffer[2];
-	value = (value << 8) + buffer[1];
-	value = (value << 8) + buffer[0];
-	
-
-	return value;
-}
-
-xp::RexFile* xp::RexIO::loadFile(std::string const& filename) {
-	//difference from rexreader++:
-	//does all the reading in one go.
-
-	gz = gzopen(filename.c_str(), "rb"); //Read binary	
-
-	if (gz == NULL) {
-		std::cerr << "Failed to open .xp file." << filename.c_str() << std::endl;
-		return nullptr;
-	}
+	if (gz == NULL) { std::cerr << "Failed to open .xp file." << filename.c_str() << std::endl; }
 	try {
-		int version = readInt();
-		//Note implicit conversion
-		unsigned int layers = readInt();
-		unsigned int width  = readInt();
-		unsigned int height = readInt();
+		gzread(gz, (void*)&version, sizeof(version));
+		gzread(gz, (void*)&num_layers, sizeof(num_layers));
+		gzread(gz, (void*)&width, sizeof(width));
+		gzread(gz, (void*)&height, sizeof(height));
 
-		RexFile* xp = new RexFile(version, width, height, layers);
+		for (int i = 0; i < num_layers; i++)
+			layers[i] = new RexLayer(width, height);
 
-		const int tileLen = 10;
+		const int tileLen = 10; //number of bytes in a tile
 		Byte buffer[tileLen];
 
-		//We have already read the w and h values, but we can't read them twice for the first layer or we'll be unsynced
-		bool firstread = true;
-
-		for (int layer_index = 0; layer_index < layers; layer_index++) {
-			if (!firstread) { //this logic is SO FUCKING KLUDGY
-				//Read and throw away the repeated layer and width data
-				readInt();
-				readInt();
-			}
-			else { firstread = false; }
-
-			xp::RexLayer* layer = xp->layers[layer_index];
+		for (int layer_index = 0; layer_index < num_layers; layer_index++) {
+			RexLayer* layer = layers[layer_index];
 			for (unsigned int x = 0; x < width; x++) {
 				for (unsigned int y = 0; y < height; y++) {
-					xp::RexTile* tile = &layer->tiles[x + (y * width)];
+					RexTile* tile = &layer->tiles[x + (y * width)];
 					gzread(gz, tile, tileLen);
 				}
 			}
+			//The layer and height information is repeated.
+			//This is expected to read off the end after the last layer.
+			gzseek(gz,SEEK_CUR,sizeof(width)+sizeof(height));
 		}
-		return xp;
 	}
 	catch (int e) {
 		throw("Bad .xp file " + e);
 	}
-
 	gzclose(gz);
-
-	return nullptr;
 }
 
-bool xp::RexIO::saveFile(RexFile const& xp, std::string const & filename) {
-	gzFile gz = gzopen(filename.c_str(),"wb"); //Write binary
+xp::RexFile::RexFile(int _version, int _width, int _height, int _num_layers)
+	:version(_version), width(_width), height(_height), num_layers(_num_layers) {
+	for (int i = 0; i < num_layers; i++) {
+		layers[i] = new RexLayer(width, height);
+	}
+}
 
+xp::RexFile::~RexFile()
+{
+	for (int i = 0; i < num_layers; i++) {
+		delete(layers[i]);
+	}
+}
+
+void xp::RexFile::save(std::string const & filename) {
 	typedef void* vp;
+	const int color_size = sizeof(xp::RexTile::fore_red);
+	const int chara_size = sizeof(xp::RexTile::character);
 
-	gzwrite(gz,(vp)&xp.version,4);
-	gzwrite(gz,(vp)&xp.layers, 4);
+	gzFile gz = gzopen(filename.c_str(), "wb");
 
-	for (int i = 0; i < xp.num_layers; ++i) {
-		gzwrite(gz,(vp)&xp.width,4);
-		gzwrite(gz,(vp)&xp.height,4);
-		for (int x = 0; x < xp.width; ++x) {
-			for (int y = 0; y < xp.height; ++y) {
-				xp::RexTile* tile = &xp.layers[i]->tiles[x + (y * xp.width)];
-				gzwrite(gz, (vp)&tile->character, 4);
+	gzwrite(gz, (vp)&version, sizeof(version));
+	gzwrite(gz, (vp)&num_layers, sizeof(num_layers));
 
-				gzwrite(gz, (vp)&tile->fore_red, 1);
-				gzwrite(gz, (vp)&tile->fore_green, 1);
-				gzwrite(gz, (vp)&tile->fore_blue, 1);
-
-				gzwrite(gz, (vp)&tile->back_red, 1);
-				gzwrite(gz, (vp)&tile->back_green, 1);
-				gzwrite(gz, (vp)&tile->back_blue, 1);
+	for (int i = 0; i < num_layers; ++i) {
+		gzwrite(gz, (vp)&width, 4);
+		gzwrite(gz, (vp)&height, 4);
+		for (int x = 0; x < width; ++x) {
+			for (int y = 0; y < height; ++y) {
+				xp::RexTile* tile = getTile(i, x, y);
+				//Character
+				gzwrite(gz, (vp)&tile->character, chara_size);
+				//Foreground
+				gzwrite(gz, (vp)&tile->fore_red, color_size);
+				gzwrite(gz, (vp)&tile->fore_green, color_size);
+				gzwrite(gz, (vp)&tile->fore_blue, color_size);
+				//Background
+				gzwrite(gz, (vp)&tile->back_red, color_size);
+				gzwrite(gz, (vp)&tile->back_green, color_size);
+				gzwrite(gz, (vp)&tile->back_blue, color_size);
 			}
 		}
 	}
 
-	gzflush(gz,Z_FULL_FLUSH);
+	gzflush(gz, Z_FULL_FLUSH);
 	gzclose(gz);
-
-	return true;
 }

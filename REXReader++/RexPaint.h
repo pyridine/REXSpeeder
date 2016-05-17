@@ -4,8 +4,10 @@
 #include "zlib.h"
 #include "zconf.h"
 
-namespace xp {
+//As of v1.02, there is a maximum of four layers in an .xp file
+#define REXPAINT_MAX_NUM_LAYERS 4
 
+namespace xp {
 	typedef unsigned char uchar;
 	typedef unsigned int uint;
 
@@ -23,8 +25,7 @@ namespace xp {
 				   instead of 10. Anyway, don't count on sizeof == 10.*/
 	};
 
-	class RexLayer {
-	public:
+	struct RexLayer {
 		RexTile* tiles;
 
 		RexLayer(int width, int height)
@@ -37,30 +38,25 @@ namespace xp {
 	};
 
 	class RexFile {
-	public:
-		int version; //Only needed for saving files.
+	private:
+		int version;
 		int width, height, num_layers;
-		//As of v1.02, there is a maximum of four layers to a .xp file
-		RexLayer* layers[4];
-
-		RexFile(int _version,  int _width,  int _height,  int _num_layers)
-			:version(_version), width(_width), height(_height), num_layers(_num_layers) {
-			for ( int i = 0; i < num_layers; i++) {
-				layers[i] = new RexLayer(width, height);
-			}
-		}
-
-		~RexFile() {
-			for (int i = 0; i < num_layers; i++) {
-				delete(layers[i]);
-			}
-		}
-	};
-
-	class RexIO {
 	public:
-		RexFile* loadFile(std::string const& filename);
-		bool saveFile(RexFile const& xp, std::string const& filename);
+		RexFile(std::string const& filename); //Load an .xp file
+		RexFile(int _version, int _width, int _height, int _num_layers); //Create a blank RexFile with the specified properties
+		~RexFile();
+		void save(std::string const& filename); //Save this object into a valid .xp file that RexPaint can load.
+
+		inline int getVersion() { return version; };
+		inline int getWidth() { return width; };
+		inline int getHeight() { return height; };
+		inline int getNumLayers() { return num_layers; };
+
+		RexLayer* layers[REXPAINT_MAX_NUM_LAYERS];
+		inline RexTile* getTile(int layer, int x, int y) { return &layers[layer]->tiles[x + (y * width)]; };
+
+	private:
+		RexFile(); //No default constructor.
 	};
 
 }
