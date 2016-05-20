@@ -20,15 +20,18 @@ namespace xp {
 
 			for (int layer_index = 0; layer_index < num_layers; layer_index++) {
 				RexLayer* layer = layers[layer_index];
-				for (unsigned int x = 0; x < width; x++) {
-					for (unsigned int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					for (int y = 0; y < height; y++) {
 						RexTile* tile = &layer->tiles[x + (y * width)];
 						gzread(gz, tile, tileLen);
 					}
 				}
+
 				//The layer and height information is repeated.
 				//This is expected to read off the end after the last layer.
-				gzseek(gz, SEEK_CUR, sizeof(width) + sizeof(height));
+				gzread(gz, (void*)&width, sizeof(width));
+				gzread(gz, (void*)&height, sizeof(height));
+				//gzseek(gz, SEEK_CUR, sizeof(width) + sizeof(height));
 			}
 		}
 		catch (int e) {
@@ -60,12 +63,13 @@ namespace xp {
 		gzwrite(gz, (vp)&version, sizeof(version));
 		gzwrite(gz, (vp)&num_layers, sizeof(num_layers));
 
-		for (int i = 0; i < num_layers; ++i) {
-			gzwrite(gz, (vp)&width, 4);
-			gzwrite(gz, (vp)&height, 4);
-			for (int x = 0; x < width; ++x) {
-				for (int y = 0; y < height; ++y) {
-					RexTile* tile = getTile(i, x, y);
+		for (int layer = 0; layer < num_layers; ++layer) {
+			gzwrite(gz, (vp)&width, sizeof(width));
+			gzwrite(gz, (vp)&height, sizeof(height));
+
+			for (int x = 0; x < width; x++) {
+				for (int y = 0; y < height; y++) {
+					RexTile* tile = getTile(layer, x, y);
 					//Character
 					gzwrite(gz, (vp)&tile->character, chara_size);
 					//Foreground
