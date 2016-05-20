@@ -23,6 +23,13 @@ namespace xp {
 				   instead of 10. Or something. Anyway, don't count on sizeof == 10.*/
 	};
 
+	//REXpaint identifies transparent tiles by setting their background color to 255,0,255 as of v1.02.
+	//You may want to check this before converting a RexFile to your own image representation format.
+	//(By default, the background of layer 1 is not transparent).
+	static bool isTransparent(RexTile* tile) {
+		return (tile->back_red == 255 && tile->back_green == 0 && tile->back_blue == 255);
+	}
+
 	struct RexLayer {
 		RexTile* tiles;
 
