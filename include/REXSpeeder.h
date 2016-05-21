@@ -1,31 +1,29 @@
 /*For version 1.02 of REXPaint*/
 
-#ifndef REX_PAINT_H
-#define REX_PAINT_H
+#ifndef REXSPEEDER_H
+#define REXSPEEDER_H
 #include <iostream>
 
 //There is a maximum of four layers in an .xp file
 #define REXPAINT_MAX_NUM_LAYERS 4
 
 namespace xp {
-	typedef unsigned char uchar;
-	typedef unsigned int uint;
-
-	//This struct's layout matches that of an .xp file.
+	
+	//This struct matches the order and width of data in .xp tiles.
 	struct  RexTile {
-		//I don't know why a supposedly CP437 character should be 4 bytes wide, but thus sayeth the manual.
-		uint  character;  
-		uchar fore_red;
-		uchar fore_green;
-		uchar fore_blue;
-		uchar back_red;
-		uchar back_green;
-		uchar back_blue;
+		//I don't know why a CP437 character should be 4 bytes wide, but thus spoke the manual.
+		unsigned int  character;  
+		unsigned char fore_red;
+		unsigned char fore_green;
+		unsigned char fore_blue;
+		unsigned char back_red;
+		unsigned char back_green;
+		unsigned char back_blue;
 	};
 
 	//REXpaint identifies transparent tiles by setting their background color to 255,0,255 as of v1.02.
 	//You may want to check this before converting a RexFile to your own image representation format.
-	//(By default, the background of layer 1 is not transparent).
+	//(By default, no tile in the first layer is transaprent).
 	static bool isTransparent(RexTile* tile) {
 		return (tile->back_red == 255 && tile->back_green == 0 && tile->back_blue == 255);
 	}
@@ -46,7 +44,7 @@ namespace xp {
 	public:
 		//Load an .xp file into a new RexFile.
 		RexFile(std::string const& filename);
-		//Save this RexFile into a vavlid .xp file that RexPaint can load (if the ".xp" suffix is present).
+		//Save this RexFile into a valid .xp file that RexPaint can load (if the ".xp" suffix is present).
 		void save(std::string const& filename);
 		//Create a blank RexFile with the specified attributes.
 		RexFile(int _version, int _width, int _height, int _num_layers); 
@@ -70,10 +68,10 @@ namespace xp {
 		//Useful for iterating through a whole layer in one go for coordinate-nonspecific tasks.
 		inline RexTile* getTile(int layer, int index) { return &layers[layer]->tiles[index]; };
 
-		//Replaces the data for a tile. Not super necessary, but might save you some syntax.
+		//Replaces the data for a tile. Not super necessary, but might save you a couple lines.
 		inline void setTile(int layer, int x, int y, RexTile& val) { *getTile(layer, x, y) = val; };
 
-		//Replaces the data for a tile. Not super necessary, but might save you some syntax.
+		//Replaces the data for a tile. Not super necessary, but might save you a couple lines.
 		inline void setTile(int layer, int i, RexTile& val) { *getTile(layer, i) = val; };
 
 	private:
@@ -85,7 +83,6 @@ namespace xp {
 		//Forbid default construction.
 		RexFile(); 
 	};
-
 }
 
-#endif //REX_PAINT_H
+#endif //REXSPEEDER_H
