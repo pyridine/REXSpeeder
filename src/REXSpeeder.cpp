@@ -5,7 +5,8 @@ namespace xp {
 //===========================================================================================================//
 //    Loading an xp file                                                                                     //
 //===========================================================================================================//
-	RexFile::RexFile(std::string const & filename) {
+	RexFile::RexFile(std::string const & filename)
+	{
 		const int tileLen = 10; //Number of bytes in a tile. Not equal to sizeof(RexTile) due to padding.
 
 		gzFile gz = gzopen(filename.c_str(), "rb");
@@ -21,11 +22,8 @@ namespace xp {
 				layers[i] = new RexLayer(width, height);
 
 			for (int layer_index = 0; layer_index < num_layers; layer_index++) {
-				RexLayer* layer = layers[layer_index];
-				for (int i = 0; i < width*height; ++i){
-					RexTile* tile = &layer->tiles[i];
-					gzread(gz, tile, tileLen);
-				}
+				for (int i = 0; i < width*height; ++i)
+					gzread(gz, getTile(layer_index, i), tileLen);
 
 				//The layer and height information is repeated.
 				//This is expected to read off the end after the last layer.
@@ -43,7 +41,8 @@ namespace xp {
 //===========================================================================================================//
 //    Saving an xp file                                                                                      //
 //===========================================================================================================//
-	void RexFile::save(std::string const & filename) {
+	void RexFile::save(std::string const & filename)
+	{
 		typedef void* vp;
 		const int color_size = sizeof(RexTile::fore_red);
 		const int chara_size = sizeof(RexTile::character);
@@ -80,10 +79,10 @@ namespace xp {
 //    Constructors / Destructors                                                                             //
 //===========================================================================================================//
 	RexFile::RexFile(int _version, int _width, int _height, int _num_layers)
-		:version(_version), width(_width), height(_height), num_layers(_num_layers) {
-		for (int i = 0; i < num_layers; i++) {
+		:version(_version), width(_width), height(_height), num_layers(_num_layers)
+	{
+		for (int i = 0; i < num_layers; i++) 
 			layers[i] = new RexLayer(width, height);
-		}
 	}
 
 	RexFile::~RexFile() {
@@ -93,7 +92,7 @@ namespace xp {
 	}
 
 //===========================================================================================================//
-//    Utility functions                                                                                      //
+//    Utility Functions                                                                                      //
 //===========================================================================================================//
 	void RexFile::flatten() {
 		if (num_layers == 1)

@@ -1,26 +1,26 @@
+/*For version 1.02 of REXPaint*/
+
 #ifndef REX_PAINT_H
 #define REX_PAINT_H
 #include <iostream>
 
-//As of v1.02, there is a maximum of four layers in an .xp file
+//There is a maximum of four layers in an .xp file
 #define REXPAINT_MAX_NUM_LAYERS 4
 
 namespace xp {
 	typedef unsigned char uchar;
 	typedef unsigned int uint;
 
+	//This struct's layout matches that of an .xp file.
 	struct  RexTile {
-		/*This layout matches that of the .xp file*/
-		uint  character;  //Why this is an unsigned int I have no idea
+		//I don't know why a supposedly CP437 character should be 4 bytes wide, but thus sayeth the manual.
+		uint  character;  
 		uchar fore_red;
 		uchar fore_green;
 		uchar fore_blue;
 		uchar back_red;
 		uchar back_green;
 		uchar back_blue;
-		/*WARNING: Despite this layout matching the RexPaint representation,
-				   your compiler will probably pad this out to 12 bytes (4*3)
-				   instead of 10. Or something. Anyway, don't count on sizeof == 10.*/
 	};
 
 	//REXpaint identifies transparent tiles by setting their background color to 255,0,255 as of v1.02.
@@ -43,30 +43,47 @@ namespace xp {
 	};
 
 	class RexFile {
-	private:
-		int version;
-		int width, height, num_layers;
 	public:
-		RexFile(std::string const& filename); //Load an .xp file
-		RexFile(int _version, int _width, int _height, int _num_layers); //Create a blank RexFile with the specified properties
+		//Load an .xp file into a new RexFile.
+		RexFile(std::string const& filename);
+		//Save this RexFile into a vavlid .xp file that RexPaint can load (if the ".xp" suffix is present).
+		void save(std::string const& filename);
+		//Create a blank RexFile with the specified attributes.
+		RexFile(int _version, int _width, int _height, int _num_layers); 
 		~RexFile();
-		void save(std::string const& filename); //Save this object into a valid .xp file that RexPaint can load.
 
+		//Combines all the layers of the image into one layer.
+		//Respects transparency.
+		void flatten();
+
+		//Image attributes
 		inline int getVersion() { return version; };
 		inline int getWidth() { return width; };
 		inline int getHeight() { return height; };
 		inline int getNumLayers() { return num_layers; };
 
-		RexLayer* layers[REXPAINT_MAX_NUM_LAYERS];
+		//Returns a pointer to a single tile specified by layer, x coordinate, y coordinate.
+		//0,0 is the top-left corner.
 		inline RexTile* getTile(int layer, int x, int y) { return &layers[layer]->tiles[y + (x * height)]; };
+
+		//Returns a pointer to a single tile specified by layer and the actual index into the array.
+		//Useful for iterating through a whole layer in one go for coordinate-nonspecific tasks.
 		inline RexTile* getTile(int layer, int index) { return &layers[layer]->tiles[index]; };
+
+		//Replaces the data for a tile. Not super necessary, but might save you some syntax.
 		inline void setTile(int layer, int x, int y, RexTile& val) { *getTile(layer, x, y) = val; };
 
-		//Combines all the layers of the image into one layer.
-		//Respects transparency.
-		void flatten();
+		//Replaces the data for a tile. Not super necessary, but might save you some syntax.
+		inline void setTile(int layer, int i, RexTile& val) { *getTile(layer, i) = val; };
+
 	private:
-		RexFile(); //No default constructor.
+		//Image properties
+		int version;
+		int width, height, num_layers;
+		RexLayer* layers[REXPAINT_MAX_NUM_LAYERS];
+
+		//Forbid default construction.
+		RexFile(); 
 	};
 
 }

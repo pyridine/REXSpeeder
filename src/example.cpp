@@ -1,7 +1,7 @@
 #include "REXSpeeder.h"
 
 int main(){
-	xp::RexFile nyan("..\\layered.xp");
+	xp::RexFile nyan("..\\splash2.xp");
 
 	/*Flatten all layers into one, respecting transparency.*/
 	nyan.flatten();
@@ -17,7 +17,7 @@ int main(){
 			}
 		}
 
-	nyan.save("..\\lay.xp");
+	nyan.save("..\\splashU.xp");
 
 	return EXIT_SUCCESS;
 }
