@@ -8,7 +8,6 @@
 #define REXPAINT_MAX_NUM_LAYERS 4
 
 namespace xp {
-	
 	//This struct matches the order and width of data in .xp tiles.
 	struct  RexTile {
 		//I don't know why a CP437 character should be 4 bytes wide, but thus spoke the manual.
@@ -21,38 +20,35 @@ namespace xp {
 		unsigned char back_blue;
 	};
 
-	//REXpaint identifies transparent tiles by setting their background color to 255,0,255 as of v1.02.
-	//You may want to check this before converting a RexFile to your own image representation format.
+	//REXpaint identifies transparent tiles by setting their background color to 255,0,255.
+	//You may want to check this for each tile before drawing or converting a RexFile.
 	//(By default, no tile in the first layer is transaprent).
-	static bool isTransparent(RexTile* tile) {
-		return (tile->back_red == 255 && tile->back_green == 0 && tile->back_blue == 255);
-	}
+	bool isTransparent(RexTile* tile);
+
+	//Returns a transparent tile.
+	inline RexTile transparentTile();
 
 	struct RexLayer {
 		RexTile* tiles;
-
-		RexLayer(int width, int height)
-			:tiles(new RexTile[width*height]) {}
-
-		~RexLayer() {
-			delete[] tiles;
-			tiles = nullptr;
-		}
+		RexLayer(int width, int height);
+		~RexLayer();
 	};
 
 	class RexFile {
 	public:
 		//Load an .xp file into a new RexFile.
+		//Note: May throw a const char* error message and set errno.
+		//Both the error message and the value of errno may be as gzopen or gzread set them.
 		RexFile(std::string const& filename);
-		//Save this RexFile into a valid .xp file that RexPaint can load (if the ".xp" suffix is present).
-		void save(std::string const& filename);
-		//Create a blank RexFile with the specified attributes.
-		RexFile(int _version, int _width, int _height, int _num_layers); 
-		~RexFile();
 
-		//Combines all the layers of the image into one layer.
-		//Respects transparency.
-		void flatten();
+		//Save this RexFile into a valid .xp file that RexPaint can load (if the ".xp" suffix is present).
+		//Note: May throw a const char* error message and set errno.
+		//Both the error message and the value of errno may be as gzopen or gzwrite set them.
+		void save(std::string const& filename);
+
+		//Create a blank RexFile with the specified attributes.
+		//Layers above the first will be made of transparent tiles.
+		RexFile(int _version, int _width, int _height, int _num_layers); 
 
 		//Image attributes
 		inline int getVersion() { return version; };
@@ -74,11 +70,16 @@ namespace xp {
 		//Replaces the data for a tile. Not super necessary, but might save you a couple lines.
 		inline void setTile(int layer, int i, RexTile& val) { *getTile(layer, i) = val; };
 
+		//Combines all the layers of the image into one layer.
+		//Respects transparency.
+		void flatten();
+
+		~RexFile();
 	private:
 		//Image properties
 		int version;
 		int width, height, num_layers;
-		RexLayer* layers[REXPAINT_MAX_NUM_LAYERS];
+		RexLayer* layers[REXPAINT_MAX_NUM_LAYERS]; //layers[0] is the first layer.
 
 		//Forbid default construction.
 		RexFile(); 
