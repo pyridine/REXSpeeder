@@ -2,7 +2,6 @@
 #include "zlib.h"
 
 namespace xp {
-
 //===========================================================================================================//
 //    Loading an xp file                                                                                     //
 //===========================================================================================================//
@@ -91,5 +90,28 @@ namespace xp {
 		for (int i = 0; i < num_layers; i++) {
 			delete(layers[i]);
 		}
+	}
+
+//===========================================================================================================//
+//    Utility functions                                                                                      //
+//===========================================================================================================//
+	void RexFile::flatten() {
+		if (num_layers == 1)
+			return;
+
+		//Paint the last layer onto the second-to-last
+		for (int i = 0; i < width*height; ++i) {
+			RexTile* overlay = getTile(num_layers - 1, i);
+			if (!isTransparent(overlay)) {
+				*getTile(num_layers - 2, i) = *overlay;
+			}
+		}
+
+		//Remove the last layer
+		delete(layers[num_layers - 1]);
+		--num_layers;
+
+		//Recurse
+		flatten();
 	}
 }
