@@ -38,7 +38,7 @@ namespace xp {
 
 		~RexLayer() {
 			delete[] tiles;
-			tiles = NULL;
+			tiles = nullptr;
 		}
 	};
 
@@ -52,20 +52,19 @@ namespace xp {
 		~RexFile();
 		void save(std::string const& filename); //Save this object into a valid .xp file that RexPaint can load.
 
-		//Combines all the layers of the image into one layer.
-		//Respects transparency.
-		inline void flatten();
-
 		inline int getVersion() { return version; };
 		inline int getWidth() { return width; };
 		inline int getHeight() { return height; };
 		inline int getNumLayers() { return num_layers; };
 
 		RexLayer* layers[REXPAINT_MAX_NUM_LAYERS];
-		inline RexTile* getTile(int layer, int x, int y) { return &layers[layer]->tiles[x + (y * width)]; };
+		inline RexTile* getTile(int layer, int x, int y) { return &layers[layer]->tiles[y + (x * height)]; };
 		inline RexTile* getTile(int layer, int index) { return &layers[layer]->tiles[index]; };
 		inline void setTile(int layer, int x, int y, RexTile& val) { *getTile(layer, x, y) = val; };
 
+		//Combines all the layers of the image into one layer.
+		//Respects transparency.
+		void flatten();
 	private:
 		RexFile(); //No default constructor.
 	};
