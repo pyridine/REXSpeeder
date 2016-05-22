@@ -11,6 +11,10 @@ static void s_gzread(gzFile g, voidp buf, unsigned int len)
 	if (gzread(g, buf, len) > 0)
 		return;
 
+	/*We expect to read past the end of the file after the last layer.*/
+	if (gzeof(g))
+		return;
+
 	throw gzerror(g,&errno);
 }
 
@@ -106,7 +110,7 @@ namespace xp {
 			gzflush(gz, Z_FULL_FLUSH);
 			gzclose(gz);
 		}
-		catch (...) { throw; };
+		catch (...) { throw; }
 	}
 
 //===========================================================================================================//

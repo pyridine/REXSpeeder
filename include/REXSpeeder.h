@@ -23,7 +23,7 @@ namespace xp {
 	//REXpaint identifies transparent tiles by setting their background color to 255,0,255.
 	//You may want to check this for each tile before drawing or converting a RexFile.
 	//(By default, no tile in the first layer is transaprent).
-	bool isTransparent(RexTile* tile);
+	inline bool isTransparent(RexTile* tile);
 
 	//Returns a transparent tile.
 	inline RexTile transparentTile();
