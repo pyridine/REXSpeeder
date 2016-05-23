@@ -6,7 +6,7 @@ void testTime(std::string fname);
 
 int main() {
 	try {
-		xp::RexFile nyan("nyan.xp");
+		xp::RexFile nyan("files\\nyan.xp");
 
 		/*Flatten all layers into one, respecting transparency.*/
 		nyan.flatten();
@@ -36,20 +36,20 @@ int main() {
 
 	/*Testing functions follow.*/
 
-#define TESTING_TIME 0
+#define TESTING_TIME 1
 #if TESTING_TIME
 	/*These files are 10x10, 20x20, etc.
 	  The function tests how many microseconds 
 	  it takes to save and load each.*/
-	testTime("10");
-	testTime("20");
-	testTime("40");
-	testTime("80");
-	testTime("160");
-	testTime("320");
-	testTime("640");
-	testTime("1280");
-	testTime("2500"); //Maximum size REXPaint 1.02 allows
+	testTime("files\\10");
+	testTime("files\\20");
+	testTime("files\\40");
+	testTime("files\\80");
+	testTime("files\\160");
+	testTime("files\\320");
+	testTime("files\\640");
+	testTime("files\\1280");
+	testTime("files\\2500"); //Maximum size REXPaint 1.02 allows
 #endif
 	return EXIT_SUCCESS;
 }
