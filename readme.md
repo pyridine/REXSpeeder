@@ -1,6 +1,8 @@
 # REXSpeeder
 
-A C++ library for loading and saving [REXPaint](http://www.gridsagegames.com/rexpaint/) files quickly. Think of REXSpeeder as the glue between REXPaint and your project. 
+A C++ library for loading and saving [REXPaint](http://www.gridsagegames.com/rexpaint/) files quickly.
+
+Think of REXSpeeder as the glue between REXPaint and your project. 
 
 ### Features:
  * Really fast.
@@ -22,7 +24,7 @@ In this image, the cat is on layer 2, and the blue background and star are on la
 Then, after `#include <REXSpeeder.h>`, 
 
 ````
-xp::RexFile nyan("nyan.xp");
+xp::RexImage nyan("nyan.xp");
 
 nyan.flatten();
 
@@ -47,6 +49,8 @@ we have a new file, "cat.xp", which can be loaded in REXPaint:
 
 
 See `example/` for the source code and Visual Studio project.
+
+
 REXSpeeder functions are documented in `include/REXSpeeder.h`.
 
 ## Acknowledgements

@@ -58,7 +58,7 @@ namespace xp {
 //===========================================================================================================//
 //    Loading an xp file                                                                                     //
 //===========================================================================================================//
-	RexFile::RexFile(std::string const & filename)
+	RexImage::RexImage(std::string const & filename)
 	{
 		typedef void* vp;
 		const int tileLen = 10; //Number of bytes in a tile. Not equal to sizeof(RexTile) due to padding.
@@ -94,7 +94,7 @@ namespace xp {
 //===========================================================================================================//
 //    Saving an xp file                                                                                      //
 //===========================================================================================================//
-	void RexFile::save(std::string const & filename)
+	void RexImage::save(std::string const & filename)
 	{
 		typedef void* vp;
 		const int color_size = sizeof(RexTile::fore_red);
@@ -134,7 +134,7 @@ namespace xp {
 //===========================================================================================================//
 //    Constructors / Destructors                                                                             //
 //===========================================================================================================//
-	RexFile::RexFile(int _version, int _width, int _height, int _num_layers)
+	RexImage::RexImage(int _version, int _width, int _height, int _num_layers)
 		:version(_version), width(_width), height(_height), num_layers(_num_layers)
 	{
 		for (int i = 0; i < num_layers; i++)
@@ -149,7 +149,7 @@ namespace xp {
 		}
 	}
 
-	RexFile::~RexFile() 
+	RexImage::~RexImage() 
 	{
 		for (int i = 0; i < num_layers; i++) {
 			delete(layers[i]);
@@ -159,7 +159,7 @@ namespace xp {
 //===========================================================================================================//
 //    Utility Functions                                                                                      //
 //===========================================================================================================//
-	void RexFile::flatten() {
+	void RexImage::flatten() {
 		if (num_layers == 1)
 			return;
 

@@ -6,7 +6,7 @@ void testTime(std::string fname);
 
 int main() {
 	try {
-		xp::RexFile nyan("files\\nyan.xp");
+		xp::RexImage nyan("files\\nyan.xp");
 
 		/*Flatten all layers into one, respecting transparency.*/
 		nyan.flatten();
@@ -63,7 +63,7 @@ void testTime(std::string fname)
 	fname = s.str();
 
 	auto start = std::chrono::high_resolution_clock::now();
-	xp::RexFile file(fname);
+	xp::RexImage file(fname);
 	auto elapsed = std::chrono::high_resolution_clock::now() - start;
 
 	std::cout << fname << " load: " << std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() << std::endl;

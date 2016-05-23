@@ -36,14 +36,14 @@ namespace xp {
 		~RexLayer();
 	};
 
-	class RexFile {
+	class RexImage {
 	public:
 		//Load an .xp file into a new RexFile.
 		//Note: May throw a const char* error message and set errno.
 		//Both the error message and the value of errno may be as gzopen or gzread set them.
 		//It may also throw an error with code REXSPEEDER_FILE_DOES_NOT_EXIST.
 		//Will not throw an error if the file specified by `filename` is not zlib compressed.
-		RexFile(std::string const& filename);
+		RexImage(std::string const& filename);
 
 		//Save this RexFile into a valid .xp file that RexPaint can load (if the ".xp" suffix is present).
 		//Note: May throw a const char* error message and set errno.
@@ -52,7 +52,7 @@ namespace xp {
 
 		//Create a blank RexFile with the specified attributes.
 		//Layers above the first will be made of transparent tiles.
-		RexFile(int _version, int _width, int _height, int _num_layers);
+		RexImage(int _version, int _width, int _height, int _num_layers);
 
 		//Image attributes
 		inline int getVersion() { return version; };
@@ -78,7 +78,7 @@ namespace xp {
 		//Respects transparency.
 		void flatten();
 
-		~RexFile();
+		~RexImage();
 	private:
 		//Image properties
 		int version;
@@ -86,7 +86,7 @@ namespace xp {
 		RexLayer* layers[REXPAINT_MAX_NUM_LAYERS]; //layers[0] is the first layer.
 
 		//Forbid default construction.
-		RexFile();
+		RexImage();
 	};
 
 	class Rexception : public std::exception {
