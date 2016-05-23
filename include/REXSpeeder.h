@@ -12,7 +12,7 @@
 namespace xp {
 	//This struct matches the order and width of data in .xp tiles.
 	struct  RexTile {
-		//I don't know why a CP437 character should be 4 bytes wide, but thus spoke the manual.
+		//I don't know why a CP437 character should be 4 bytes wide, but thus sprach the manual.
 		unsigned int  character;
 		unsigned char fore_red;
 		unsigned char fore_green;
