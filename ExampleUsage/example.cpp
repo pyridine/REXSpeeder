@@ -6,7 +6,7 @@ void testTime(std::string fname);
 
 int main(){
 	try {
-		xp::RexFile nyan("..\\nyan.xp");
+		xp::RexFile nyan("nyan.xp");
 
 		/*Flatten all layers into one, respecting transparency.*/
 		nyan.flatten();
@@ -22,7 +22,7 @@ int main(){
 					nyan.getTile(layer, x, y)->fore_green = original.fore_red;
 				}
 			}
-		nyan.save("..\\cat.xp");
+		nyan.save("cat.xp");
 	}
 	catch (xp::Rexception& e) {
 		std::cerr << "Exception! " << e.what() << " [" << e.code << "]" << std::endl;
@@ -54,7 +54,7 @@ int main(){
 void testTime(std::string fname)
 {
 	std::stringstream s;
-	s << "..\\" << fname << ".xp";
+	s  << fname << ".xp";
 	fname = s.str();
 
 	auto start = std::chrono::high_resolution_clock::now();
