@@ -61,7 +61,8 @@ namespace xp {
 	RexImage::RexImage(std::string const & filename)
 	{
 		typedef void* vp;
-		const int tileLen = 10; //Number of bytes in a tile. Not equal to sizeof(RexTile) due to padding.
+		//Number of bytes in a tile. Not equal to sizeof(RexTile) due to padding.
+		const int tileLen = 10; 
 
 		gzFile gz;
 		try {
@@ -83,7 +84,6 @@ namespace xp {
 				//This is expected to read off the end after the last layer.
 				s_gzread(gz, (vp)&width, sizeof(width));
 				s_gzread(gz, (vp)&height, sizeof(height));
-				//gzseek(gz, SEEK_CUR, sizeof(width) + sizeof(height));
 			}
 		}
 		catch (...) { throw; }
@@ -97,8 +97,8 @@ namespace xp {
 	void RexImage::save(std::string const & filename)
 	{
 		typedef void* vp;
-		const int color_size = sizeof(RexTile::fore_red);
-		const int chara_size = sizeof(RexTile::character);
+		//Number of bytes in a tile. Not equal to sizeof(RexTile) due to padding.
+		const int tileLen = 10; 
 
 		try {
 			gzFile gz = s_gzopen(filename.c_str(), "wb");
@@ -110,19 +110,10 @@ namespace xp {
 				s_gzwrite(gz, (vp)&width, sizeof(width));
 				s_gzwrite(gz, (vp)&height, sizeof(height));
 
-				for (int i = 0; i < width*height; ++i) {
-					RexTile* tile = &layers[layer]->tiles[i];
-					//Character
-					s_gzwrite(gz, (vp)&tile->character, chara_size);
-					//Foreground
-					s_gzwrite(gz, (vp)&tile->fore_red, color_size);
-					s_gzwrite(gz, (vp)&tile->fore_green, color_size);
-					s_gzwrite(gz, (vp)&tile->fore_blue, color_size);
-					//Background
-					s_gzwrite(gz, (vp)&tile->back_red, color_size);
-					s_gzwrite(gz, (vp)&tile->back_green, color_size);
-					s_gzwrite(gz, (vp)&tile->back_blue, color_size);
-				}
+				for (int i = 0; i < width*height; ++i) 
+					//Note: not "sizeof(RexTile)" because of padding.
+					s_gzwrite(gz, (vp)getTile(layer,i), tileLen);
+				
 			}
 
 			gzflush(gz, Z_FULL_FLUSH);

@@ -34,13 +34,10 @@ int main() {
 	std::cout << "Successfuly saved, modified, and loaded the file." << std::endl;
 
 
-	/*Testing functions follow.*/
-
-#define TESTING_TIME 1
+	/*The following functions test how long it takes to save and load.*/
+#define TESTING_TIME 0
 #if TESTING_TIME
-	/*These files are 10x10, 20x20, etc.
-	  The function tests how many microseconds 
-	  it takes to save and load each.*/
+	/*These files are 10x10, 20x20, etc.*/
 	testTime("files\\10");
 	testTime("files\\20");
 	testTime("files\\40");
@@ -55,7 +52,7 @@ int main() {
 }
 
 
-
+/*Tests how much time, in microseconds, it takes to load and save the given file. Overwrites the file with the original file.*/
 void testTime(std::string fname)
 {
 	std::stringstream s;
