@@ -44,11 +44,11 @@ INCLUDING REXSPEEDER AS A LIBRARY
 
 If you have just followed the instructions above, or if you just want to include the library I've compiled, then some file called "REXSpeeder.lib" now exists in your "include" directory.
 
-You'll need to reference REXSpeeder.lib and REXSpeeder.h in your project in order to use REXSpeeder. See ExampleUsage\VisualStudio for an example in Visual Studio, or follow along:
+You'll need to reference REXSpeeder.lib and REXSpeeder.h in your project in order to use REXSpeeder. See example\example.vcxproj for an example in Visual Studio, or follow along:
 
 For Visual Studio, you'll follow the same process of modifying your project's properties as outline above:
 	1. Under C/C++ -> General -> Additional Include Directories, add "$(YourREXSpeederDirectory)\include".
-	2. Under LAdditional Library Directories, add "$(YourREXSpeederDirectory)\include".
+	2. Under Additional Library Directories, add "$(YourREXSpeederDirectory)\include".
 	3. Under Linker -> Input -> Additional Dependencies, add "REXSpeeder.lib".
 	
 (Also, a word of advice: The Property Pages dialogue in Visual Studio is a huge nuisance. Learn how to change the values in <project_name>.vcxproj by hand. It's just an XML file.)
