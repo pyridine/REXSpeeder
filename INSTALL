@@ -1,0 +1,64 @@
+Thank you for choosing REXSpeeder!
+
+You can use the library I've precompiled, build the library yourself, or simply include the sources with your project.
+
+BUILDING IT YOURSELF
+====================
+
+The .lib file I've compiled is for win32, but will still run in 64-bit Windows environments. If you'd like to compile the library yourself, here's how to do it with Visual Studio:
+	
+	1. First, You will need to direct the solution to a copy of the zlib compression library. REXSpeeder is known to work with zlib 1.2.8. You can get this from http://www.zlib.net/ and you want the "compiled DLL" version. Download it and extract it to some directory. 
+			
+	2. Here's how to tell the Visual Studio project where the zlib library is:
+			
+		1. First, open REXSpeeder.sln in the "VisualStudio" directory.
+			
+		2. From Visual Studio, under "Solution Explorer", right click on REXSpeeder and at the bottom of the menu click "Properties". (I.e., go to your project's "Property Pages".)
+			1. Navigate to C/C++ -> General
+			   You'll see that Additional Include Directories is set to:
+			
+				"C:\Development\Libs\zlib128-dll\include;..\include;%(AdditionalIncludeDirectories)"
+					
+			   Change this to:
+			
+				"$(YourZlibDirectory)\zlib128-dll\include;..\include;%(AdditionalIncludeDirectories)",
+				
+				where $(YourZlibDirectory) is replaced with the directory you extracted zlib to.
+			
+			3. Navigate to Librarian -> General
+			   You'll see that Additional Library Directores is set to:
+						
+				"C:\Development\Libs\zlib128-dll\lib;%(AdditionalLibraryDirectories)".
+						
+				Change this to:
+				
+				"$(YourZlibDirectory)\zlib128-dll\lib;%(AdditionalLibraryDirectories)".
+			
+	3. Now that all dependencies are referenced, from the "Build" menu at the top of the screen, select Build Solution. REXSpeeder.lib will be built in the "include" directory.
+			
+	
+INCLUDING REXSPEEDER AS A LIBRARY
+=================================
+
+!NOTE!: If you are getting strange errors trying to build a project that's referencing the .lib file I've given you, try building the library yourself.
+
+If you have just followed the instructions above, or if you just want to include the library I've compiled, then some file called "REXSpeeder.lib" now exists in your "include" directory.
+
+You'll need to reference REXSpeeder.lib and REXSpeeder.h in your project in order to use REXSpeeder. See ExampleUsage\VisualStudio for an example in Visual Studio, or follow along:
+
+For Visual Studio, you'll follow the same process of modifying your project's properties as outline above:
+	1. Under C/C++ -> General -> Additional Include Directories, add "$(YourREXSpeederDirectory)\include".
+	2. Under LAdditional Library Directories, add "$(YourREXSpeederDirectory)\include".
+	3. Under Linker -> Input -> Additional Dependencies, add "REXSpeeder.lib".
+	
+(Also, a word of advice: The Property Pages dialogue in Visual Studio is a huge nuisance. Learn how to change the values in <project_name>.vcxproj by hand. It's just an XML file.)
+
+	
+JUST LET ME INCLUDE THE REXSPEEDER SOURCES DARNIT WHY DOES THIS HAVE TO BE SO COMPLICATED
+=========================================================================================
+
+The header file's under the "include" directory, and the source file is under the "src" directory. Grab 'em and drop 'em in your project. Done!
+
+You'll probably end up recompiling them a lot though :(
+
+And they'll be optimized (or not) the same way the rest of your project is optimized :(

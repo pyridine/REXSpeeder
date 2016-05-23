@@ -4,7 +4,7 @@
 
 void testTime(std::string fname);
 
-int main(){
+int main() {
 	try {
 		xp::RexFile nyan("nyan.xp");
 
@@ -13,15 +13,18 @@ int main(){
 
 		/*Flip around the R,G,B values.*/
 		/*It is also possible to reference a tile by its index into its layer's tile array.*/
-		for (int layer = 0; layer < nyan.getNumLayers(); ++layer)
-			for (int x = 0; x < nyan.getWidth(); x++) {
-				for (int y = 0; y < nyan.getHeight(); y++) {
-					xp::RexTile original = *nyan.getTile(layer, x, y);
-					nyan.getTile(layer, x, y)->fore_red = original.fore_blue;
-					nyan.getTile(layer, x, y)->fore_blue = original.fore_green;
-					nyan.getTile(layer, x, y)->fore_green = original.fore_red;
-				}
+		for (int x = 0; x < nyan.getWidth(); x++) {
+			for (int y = 0; y < nyan.getHeight(); y++) {
+				xp::RexTile original = *nyan.getTile(0, x, y);
+				xp::RexTile modified = original;
+
+				modified.fore_red = original.fore_blue;
+				modified.fore_blue = original.fore_green;
+				modified.fore_green = original.fore_red;
+
+				nyan.setTile(0, x, y, modified);
 			}
+		}
 		nyan.save("cat.xp");
 	}
 	catch (xp::Rexception& e) {
@@ -30,7 +33,10 @@ int main(){
 
 	std::cout << "Successfuly saved, modified, and loaded the file." << std::endl;
 
-#define TESTING_TIME 1
+
+	/*Testing functions follow.*/
+
+#define TESTING_TIME 0
 #if TESTING_TIME
 	/*These files are 10x10, 20x20, etc.
 	  The function tests how many microseconds 
@@ -45,7 +51,6 @@ int main(){
 	testTime("1280");
 	testTime("2500"); //Maximum size REXPaint 1.02 allows
 #endif
-
 	return EXIT_SUCCESS;
 }
 
