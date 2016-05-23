@@ -2,7 +2,7 @@
 
 int main(){
 	try {
-		xp::RexFile nyan("..\\splash2.xp");
+		xp::RexFile nyan("..\\corrupt.xp");
 
 		/*Flatten all layers into one, respecting transparency.*/
 		nyan.flatten();
@@ -18,11 +18,13 @@ int main(){
 					nyan.getTile(layer, x, y)->fore_green = original.fore_red;
 				}
 			}
-		nyan.save("..\\splashU.xp");
+		nyan.save("..\\out.xp");
 	}
-	catch (std::exception& e) {
-		std::cerr << errno << ": " << e.what() << std::endl;
+	catch (xp::Rexception& e) {
+		std::cerr << "Exception! " << e.what() << " [" << e.code << "]" << std::endl;
 	}
+
+	std::cout << "Success." << std::endl;
 
 	return EXIT_SUCCESS;
 }

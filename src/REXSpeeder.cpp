@@ -6,6 +6,15 @@
 //                                                                                                           //
 //   These functions will throw an error message from gzerror, and set errno to the error code.              //
 //===========================================================================================================//
+
+static xp::Rexception makeRexception(gzFile g) {
+	/*The exception creation is a bit verbose.*/
+	int errnum = 0;
+	const char* errstr = gzerror(g, &errnum);
+	xp::Rexception e(errstr,errnum);
+	return e;
+}
+
 static void s_gzread(gzFile g, voidp buf, unsigned int len)
 {
 	if (gzread(g, buf, len) > 0)
@@ -14,8 +23,8 @@ static void s_gzread(gzFile g, voidp buf, unsigned int len)
 	/*We expect to read past the end of the file after the last layer.*/
 	if (gzeof(g))
 		return;
-
-	throw gzerror(g,&errno);
+	
+	throw makeRexception(g);
 }
 
 static void s_gzwrite(gzFile g, voidp buf, unsigned int len)
@@ -23,7 +32,7 @@ static void s_gzwrite(gzFile g, voidp buf, unsigned int len)
 	if (gzwrite(g, buf, len) > 0)
 		return;
 
-	throw gzerror(g,&errno);
+	throw makeRexception(g);
 }
 
 static gzFile s_gzopen(const std::string filename, const char* permissions)
@@ -33,7 +42,16 @@ static gzFile s_gzopen(const std::string filename, const char* permissions)
 	if (g != Z_NULL)
 		return g;
 
-	throw gzerror(g,&errno);
+	int err = 0;
+	const char* errstr = gzerror(g, &err);
+	if (err == 0) {
+		/*Assume the file simply didn't exist.*/
+		std::string s("File " + filename + " does not exist.");
+		xp::Rexception e(s, REXSPEEDER_FILE_DOES_NOT_EXIST);
+		throw e;
+	}
+	xp::Rexception e(errstr, err);
+	throw e;
 }
 
 namespace xp {

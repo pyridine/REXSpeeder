@@ -3,15 +3,17 @@
 #ifndef REXSPEEDER_H
 #define REXSPEEDER_H
 #include <iostream>
-
 //There is a maximum of four layers in an .xp file
 #define REXPAINT_MAX_NUM_LAYERS 4
+
+//The error code thrown when a file does not exist. Strangely, gzopen does not set an error code.
+#define REXSPEEDER_FILE_DOES_NOT_EXIST 20202
 
 namespace xp {
 	//This struct matches the order and width of data in .xp tiles.
 	struct  RexTile {
 		//I don't know why a CP437 character should be 4 bytes wide, but thus spoke the manual.
-		unsigned int  character;  
+		unsigned int  character;
 		unsigned char fore_red;
 		unsigned char fore_green;
 		unsigned char fore_blue;
@@ -39,6 +41,8 @@ namespace xp {
 		//Load an .xp file into a new RexFile.
 		//Note: May throw a const char* error message and set errno.
 		//Both the error message and the value of errno may be as gzopen or gzread set them.
+		//It may also throw an error with code REXSPEEDER_FILE_DOES_NOT_EXIST.
+		//Will not throw an error if the file specified by `filename` is not zlib compressed.
 		RexFile(std::string const& filename);
 
 		//Save this RexFile into a valid .xp file that RexPaint can load (if the ".xp" suffix is present).
@@ -48,7 +52,7 @@ namespace xp {
 
 		//Create a blank RexFile with the specified attributes.
 		//Layers above the first will be made of transparent tiles.
-		RexFile(int _version, int _width, int _height, int _num_layers); 
+		RexFile(int _version, int _width, int _height, int _num_layers);
 
 		//Image attributes
 		inline int getVersion() { return version; };
@@ -82,8 +86,19 @@ namespace xp {
 		RexLayer* layers[REXPAINT_MAX_NUM_LAYERS]; //layers[0] is the first layer.
 
 		//Forbid default construction.
-		RexFile(); 
+		RexFile();
+	};
+
+	class Rexception : public std::exception {
+		/*This is needlessly verbose because I don't want to reference gzFiles
+		in this header. Then users would have to include zlib.h.*/
+	public:
+		Rexception(std::string msg, int errcode) :err(msg),code(errcode) {}
+		~Rexception(){}
+		virtual const char* what() const throw() { return err.c_str(); }
+		int code;
+	private:
+		std::string err;
 	};
 }
-
 #endif //REXSPEEDER_H
