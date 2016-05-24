@@ -1,6 +1,7 @@
 /*For version 1.02 of REXPaint*/
 #pragma once
 #include <iostream>
+#include <stdint.h>
 
 //There is a maximum of four layers in an .xp file
 constexpr int REXPAINT_MAX_NUM_LAYERS=4;
@@ -12,13 +13,13 @@ namespace xp {
 	//This struct matches the order and width of data in .xp tiles.
 	struct  RexTile {
 		//I don't know why a CP437 character should be 4 bytes wide, but thus sprach the manual.
-		unsigned int  character;
-		unsigned char fore_red;
-		unsigned char fore_green;
-		unsigned char fore_blue;
-		unsigned char back_red;
-		unsigned char back_green;
-		unsigned char back_blue;
+		uint32_t  character;
+		uint8_t fore_red;
+		uint8_t fore_green;
+		uint8_t fore_blue;
+		uint8_t back_red;
+		uint8_t back_green;
+		uint8_t back_blue;
 	};
 
 	//REXpaint identifies transparent tiles by setting their background color to 255,0,255.
