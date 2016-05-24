@@ -1,5 +1,5 @@
 #include "REXSpeeder.h"
-#include "zlib.h"
+#include <zlib.h>
 
 //===========================================================================================================//
 //    Safe I/O (where "safe" means "will throw errors")                                                      //
