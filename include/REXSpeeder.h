@@ -2,6 +2,8 @@
 #pragma once
 #include <iostream>
 #include <stdint.h>
+#include <array>
+#include <vector>
 
 //There is a maximum of four layers in an .xp file
 constexpr int REXPAINT_MAX_NUM_LAYERS=4;
@@ -34,8 +36,9 @@ namespace xp {
 	}
 
 	struct RexLayer {
-		RexTile* tiles;
+		std::vector<RexTile> tiles;
 		RexLayer(int width, int height);
+		RexLayer() {}
 		~RexLayer();
 	};
 
@@ -65,11 +68,11 @@ namespace xp {
 
 		//Returns a pointer to a single tile specified by layer, x coordinate, y coordinate.
 		//0,0 is the top-left corner.
-		inline RexTile* getTile(int layer, int x, int y) { return &layers[layer]->tiles[y + (x * height)]; };
+		inline RexTile* getTile(int layer, int x, int y) { return &layers[layer].tiles[y + (x * height)]; };
 
 		//Returns a pointer to a single tile specified by layer and the actual index into the array.
 		//Useful for iterating through a whole layer in one go for coordinate-nonspecific tasks.
-		inline RexTile* getTile(int layer, int index) { return &layers[layer]->tiles[index]; };
+		inline RexTile* getTile(int layer, int index) { return &layers[layer].tiles[index]; };
 
 		//Replaces the data for a tile. Not super necessary, but might save you a couple lines.
 		inline void setTile(int layer, int x, int y, RexTile& val) { *getTile(layer, x, y) = val; };
@@ -81,12 +84,11 @@ namespace xp {
 		//Respects transparency.
 		void flatten();
 
-		~RexImage();
 	private:
 		//Image properties
 		int version;
 		int width, height, num_layers;
-		RexLayer* layers[REXPAINT_MAX_NUM_LAYERS]; //layers[0] is the first layer.
+		std::array<RexLayer, REXPAINT_MAX_NUM_LAYERS> layers; //layers[0] is the first layer.
 
 		//Forbid default construction.
 		RexImage();
