@@ -162,6 +162,7 @@ namespace xp {
 
 	bool isTransparent(RexTile * tile)
 	{
+		//This might be faster than comparing with transparentTile(), despite it being a constexpr
 		return (tile->back_red == 255 && tile->back_green == 0 && tile->back_blue == 255);
 	}	
 
