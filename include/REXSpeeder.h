@@ -1,8 +1,7 @@
 /*For version 1.02 of REXPaint*/
-
-#ifndef REXSPEEDER_H
-#define REXSPEEDER_H
+#pragma once
 #include <iostream>
+
 //There is a maximum of four layers in an .xp file
 #define REXPAINT_MAX_NUM_LAYERS 4
 
@@ -101,4 +100,3 @@ namespace xp {
 		std::string err;
 	};
 }
-#endif //REXSPEEDER_H
