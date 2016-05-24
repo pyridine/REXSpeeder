@@ -3,10 +3,10 @@
 #include <iostream>
 
 //There is a maximum of four layers in an .xp file
-#define REXPAINT_MAX_NUM_LAYERS 4
+constexpr int REXPAINT_MAX_NUM_LAYERS=4;
 
 //The error code thrown when a file does not exist. Strangely, gzopen does not set an error code.
-#define REXSPEEDER_FILE_DOES_NOT_EXIST 20202
+constexpr int REXSPEEDER_FILE_DOES_NOT_EXIST=20202;
 
 namespace xp {
 	//This struct matches the order and width of data in .xp tiles.
