@@ -28,7 +28,10 @@ namespace xp {
 	inline bool isTransparent(RexTile* tile);
 
 	//Returns a transparent tile.
-	inline RexTile transparentTile();
+	inline RexTile transparentTile()
+	{
+		return RexTile{0, 0, 0, 0, 255, 255, 0};
+	}
 
 	struct RexLayer {
 		RexTile* tiles;

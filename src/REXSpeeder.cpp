@@ -174,16 +174,7 @@ namespace xp {
 	bool isTransparent(RexTile * tile)
 	{
 		return (tile->back_red == 255 && tile->back_green == 0 && tile->back_blue == 255);
-	}
-
-	RexTile transparentTile()
-	{
-		RexTile t;
-		t.back_red = 255;
-		t.back_blue = 255;
-		t.back_green = 0;
-		return t;
-	}
+	}	
 
 //===========================================================================================================//
 //    RexLayer constructor/destructor                                                                        //
