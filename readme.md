@@ -1,18 +1,17 @@
 # REXSpeeder
 
-A C++ library for loading and saving [REXPaint](http://www.gridsagegames.com/rexpaint/) files quickly.
+A cross-platform C++ library for loading and saving [REXPaint](http://www.gridsagegames.com/rexpaint/) files quickly.
 
 Think of REXSpeeder as the glue between REXPaint and your project. 
 
 ### Features:
  * Really fast.
  * Simple API.
- * Supports re-saving valid .xp files
+ * Can export valid .xp files.
 
 ## Installation
 
 See `INSTALL` for instructions on how to use REXSpeeder for your project. 
-
 
 ## Usage
 
@@ -47,9 +46,7 @@ we have a new file, "cat.xp", which can be loaded in REXPaint:
 
 ![After](https://github.com/pyridine/REXSpeeder/raw/master/example/after.png)
 
-
-See `example/` for the source code and Visual Studio project.
-
+See `example/` for the source code and a Visual Studio project to build it. If you're using CMake, the example is built along with the library.
 
 REXSpeeder functions are documented in `include/REXSpeeder.h`.
 
