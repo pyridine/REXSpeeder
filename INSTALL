@@ -62,3 +62,17 @@ The header file's under the "include" directory, and the source file is under th
 You'll probably end up recompiling them a lot though :(
 
 And they'll be optimized (or not) the same way the rest of your project is optimized :(
+
+BUILDING CROSS-PLATFORM
+=======================
+
+CMake support is included in the "cmake" directory. You will need to have zlib installed on your development platform.
+
+To build on a *NIX the first time:
+
+1. Go to the project root.
+2. mkdir build (to create a build directory)
+3. cd build (enter the directory)
+4. cmake -g"Unix Makefiles" ../cmake
+
+Once that is done, simply type "make" inside your "build" folder. The will build the rexspeeder library for your platform. You can then copy it to your project's dependencies folder, link to it with -lrexspeeder (or equivalent), and include REXSpeeder.h. Alternatively, include this as a target in your cmake file.

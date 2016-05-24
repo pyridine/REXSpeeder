@@ -6,7 +6,7 @@ void testTime(std::string fname);
 
 int main() {
 	try {
-		xp::RexImage nyan("files\\nyan.xp");
+		xp::RexImage nyan("files/nyan.xp");
 
 		/*Flatten all layers into one, respecting transparency.*/
 		nyan.flatten();
