@@ -1,25 +1,27 @@
 /*For version 1.02 of REXPaint*/
-
-#ifndef REXSPEEDER_H
-#define REXSPEEDER_H
+#pragma once
 #include <iostream>
+#include <stdint.h>
+#include <array>
+#include <vector>
+
 //There is a maximum of four layers in an .xp file
-#define REXPAINT_MAX_NUM_LAYERS 4
+constexpr int REXPAINT_MAX_NUM_LAYERS=4;
 
 //The error code thrown when a file does not exist. Strangely, gzopen does not set an error code.
-#define REXSPEEDER_FILE_DOES_NOT_EXIST 20202
+constexpr int REXSPEEDER_FILE_DOES_NOT_EXIST=20202;
 
 namespace xp {
 	//This struct matches the order and width of data in .xp tiles.
 	struct  RexTile {
 		//I don't know why a CP437 character should be 4 bytes wide, but thus sprach the manual.
-		unsigned int  character;
-		unsigned char fore_red;
-		unsigned char fore_green;
-		unsigned char fore_blue;
-		unsigned char back_red;
-		unsigned char back_green;
-		unsigned char back_blue;
+		uint32_t  character;
+		uint8_t fore_red;
+		uint8_t fore_green;
+		uint8_t fore_blue;
+		uint8_t back_red;
+		uint8_t back_green;
+		uint8_t back_blue;
 	};
 
 	//REXpaint identifies transparent tiles by setting their background color to 255,0,255.
@@ -28,11 +30,15 @@ namespace xp {
 	inline bool isTransparent(RexTile* tile);
 
 	//Returns a transparent tile.
-	inline RexTile transparentTile();
+	inline RexTile transparentTile()
+	{
+		return RexTile{0, 0, 0, 0, 255, 255, 0};
+	}
 
 	struct RexLayer {
-		RexTile* tiles;
+		std::vector<RexTile> tiles;
 		RexLayer(int width, int height);
+		RexLayer() {}
 		~RexLayer();
 	};
 
@@ -62,11 +68,11 @@ namespace xp {
 
 		//Returns a pointer to a single tile specified by layer, x coordinate, y coordinate.
 		//0,0 is the top-left corner.
-		inline RexTile* getTile(int layer, int x, int y) { return &layers[layer]->tiles[y + (x * height)]; };
+		inline RexTile* getTile(int layer, int x, int y) { return &layers[layer].tiles[y + (x * height)]; };
 
 		//Returns a pointer to a single tile specified by layer and the actual index into the array.
 		//Useful for iterating through a whole layer in one go for coordinate-nonspecific tasks.
-		inline RexTile* getTile(int layer, int index) { return &layers[layer]->tiles[index]; };
+		inline RexTile* getTile(int layer, int index) { return &layers[layer].tiles[index]; };
 
 		//Replaces the data for a tile. Not super necessary, but might save you a couple lines.
 		inline void setTile(int layer, int x, int y, RexTile& val) { *getTile(layer, x, y) = val; };
@@ -78,12 +84,11 @@ namespace xp {
 		//Respects transparency.
 		void flatten();
 
-		~RexImage();
 	private:
 		//Image properties
 		int version;
 		int width, height, num_layers;
-		RexLayer* layers[REXPAINT_MAX_NUM_LAYERS]; //layers[0] is the first layer.
+		std::array<RexLayer, REXPAINT_MAX_NUM_LAYERS> layers; //layers[0] is the first layer.
 
 		//Forbid default construction.
 		RexImage();
@@ -101,4 +106,3 @@ namespace xp {
 		std::string err;
 	};
 }
-#endif //REXSPEEDER_H

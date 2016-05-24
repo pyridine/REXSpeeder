@@ -1,5 +1,5 @@
 #include "REXSpeeder.h"
-#include "zlib.h"
+#include <zlib.h>
 
 //===========================================================================================================//
 //    Safe I/O (where "safe" means "will throw errors")                                                      //
@@ -74,7 +74,7 @@ namespace xp {
 			s_gzread(gz, (vp)&height, sizeof(height));
 
 			for (int i = 0; i < num_layers; i++)
-				layers[i] = new RexLayer(width, height);
+				layers[i] = RexLayer(width, height);
 
 			for (int layer_index = 0; layer_index < num_layers; layer_index++) {
 				for (int i = 0; i < width*height; ++i)
@@ -128,22 +128,12 @@ namespace xp {
 	RexImage::RexImage(int _version, int _width, int _height, int _num_layers)
 		:version(_version), width(_width), height(_height), num_layers(_num_layers)
 	{
-		for (int i = 0; i < num_layers; i++)
-			layers[i] = new RexLayer(width, height);
-
 		//All layers above the first are set transparent.
 		for (int l = 1; l < num_layers; l++) {
 			for (int i = 0; i < width*height; ++i) {
 				RexTile t = transparentTile();
 				setTile(l, i, t);
 			}
-		}
-	}
-
-	RexImage::~RexImage() 
-	{
-		for (int i = 0; i < num_layers; i++) {
-			delete(layers[i]);
 		}
 	}
 
@@ -163,7 +153,6 @@ namespace xp {
 		}
 
 		//Remove the last layer
-		delete(layers[num_layers - 1]);
 		--num_layers;
 
 		//Recurse
@@ -174,26 +163,19 @@ namespace xp {
 	bool isTransparent(RexTile * tile)
 	{
 		return (tile->back_red == 255 && tile->back_green == 0 && tile->back_blue == 255);
-	}
-
-	RexTile transparentTile()
-	{
-		RexTile t;
-		t.back_red = 255;
-		t.back_blue = 255;
-		t.back_green = 0;
-		return t;
-	}
+	}	
 
 //===========================================================================================================//
 //    RexLayer constructor/destructor                                                                        //
 //===========================================================================================================//
 
-	RexLayer::RexLayer(int width, int height) :tiles(new RexTile[width*height]) {} 
+	RexLayer::RexLayer(int width, int height) 
+	{
+		tiles.resize(width * height);
+	} 
 
 	RexLayer::~RexLayer()
 	{
-			delete[] tiles;
-			tiles = nullptr;
+		tiles.clear();
 	}
 }
