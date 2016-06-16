@@ -47,7 +47,7 @@ static gzFile s_gzopen(const std::string filename, const char* permissions)
 	if (err == 0) {
 		/*Assume the file simply didn't exist.*/
 		std::string s("File " + filename + " does not exist.");
-		xp::Rexception e(s, REXSPEEDER_FILE_DOES_NOT_EXIST);
+		xp::Rexception e(s, xp::ERR_FILE_DOES_NOT_EXIST);
 		throw e;
 	}
 	xp::Rexception e(errstr, err);
