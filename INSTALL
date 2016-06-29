@@ -1,17 +1,31 @@
 Thank you for choosing REXSpeeder!
 
-You can use the library I've precompiled, build the library yourself, or simply include the sources with your project.
+You can build the library yourself (recommended), use the library I've precompiled (Windows only), or simply include the sources with your project.
 
-BUILDING IT YOURSELF
-====================
+BUILDING: LINUX, OS X (CMake)
+================================
 
-The .lib file I've compiled is for win32, but will still run in 64-bit Windows environments. If you'd like to compile the library yourself, here's how to do it with Visual Studio:
+CMake support is included in the "cmake" directory. You will need to have zlib installed on your development platform.
+
+To build on a *NIX the first time:
+
+1. Go to the project root.
+2. mkdir build (to create a build directory)
+3. cd build (enter the directory)
+4. cmake -g"Unix Makefiles" ../cmake
+
+Once that is done, simply type "make" inside your "build" folder. The will build the rexspeeder library for your platform. You can then copy it to your project's dependencies folder, link to it with -lrexspeeder (or equivalent), and include REXSpeeder.h. Alternatively, include this as a target in your cmake file.
+
+BUILDING: WINDOWS (Visual Studio)
+=================================
+
+I've included a library file for win32 builds under include/REXSpeeder.lib. If you'd like to compile the library yourself, here's how to do it with Visual Studio:
 	
-	1. First, You will need to direct the solution to a copy of the zlib compression library. REXSpeeder is known to work with zlib 1.2.8. You can get this from http://www.zlib.net/ and you want the "compiled DLL" version. Download it and extract it to some directory. 
+	1. You will need to direct the solution to a copy of the zlib compression library. REXSpeeder is known to work with zlib 1.2.8. You can get this from http://www.zlib.net/. You want the "compiled DLL" version. Download it and extract it to some directory. 
 			
-	2. Here's how to tell the Visual Studio project where the zlib library is:
+	2. Tell the Visual Studio project where the zlib library is:
 			
-		1. First, open REXSpeeder.sln in the "VisualStudio" directory.
+		1. Open REXSpeeder.sln in the "VisualStudio" directory.
 			
 		2. From Visual Studio, under "Solution Explorer", right click on REXSpeeder and at the bottom of the menu click "Properties". (I.e., go to your project's "Property Pages".)
 			1. Navigate to C/C++ -> General
@@ -34,25 +48,22 @@ The .lib file I've compiled is for win32, but will still run in 64-bit Windows e
 				
 				"$(YourZlibDirectory)\zlib128-dll\lib;%(AdditionalLibraryDirectories)".
 			
-	3. Now that all dependencies are referenced, from the "Build" menu at the top of the screen, select Build Solution. REXSpeeder.lib will be built in the "include" directory.
+	3. From the "Build" menu at the top of the screen, select Build Solution. REXSpeeder.lib will be built in the "include" directory.
 			
 	
-INCLUDING REXSPEEDER AS A LIBRARY
-=================================
+INCLUDING REXSPEEDER AS A LIBRARY (Visual Studio)
+=================================================
 
-!NOTE!: If you are getting strange errors trying to build a project that's referencing the .lib file I've given you, try building the library yourself.
-
-If you have just followed the instructions above, or if you just want to include the library I've compiled, then some file called "REXSpeeder.lib" now exists in your "include" directory.
-
-You'll need to reference REXSpeeder.lib and REXSpeeder.h in your project in order to use REXSpeeder. See example\example.vcxproj for an example in Visual Studio, or follow along:
+You need to reference REXSpeeder.lib and REXSpeeder.h in your project in order to use REXSpeeder. See example\example.vcxproj for an example in Visual Studio, or follow along:
 
 For Visual Studio, you'll follow the same process of modifying your project's properties as outline above:
 	1. Under C/C++ -> General -> Additional Include Directories, add "$(YourREXSpeederDirectory)\include".
 	2. Under Additional Library Directories, add "$(YourREXSpeederDirectory)\include".
 	3. Under Linker -> Input -> Additional Dependencies, add "REXSpeeder.lib".
 	
-(Also, a word of advice: The Property Pages dialogue in Visual Studio is a huge nuisance. Learn how to change the values in <project_name>.vcxproj by hand. It's just an XML file.)
+If you are getting strange errors trying to build a project that's referencing the .lib file I've given you, try building the library yourself.
 
+(Also, a word of advice: The Property Pages dialogue in Visual Studio is a huge nuisance. Learn how to change the values in <project_name>.vcxproj by hand. It's just an XML file.)
 	
 JUST LET ME INCLUDE THE REXSPEEDER SOURCES DARNIT WHY DOES THIS HAVE TO BE SO COMPLICATED
 =========================================================================================
@@ -61,18 +72,4 @@ The header file's under the "include" directory, and the source file is under th
 
 You'll probably end up recompiling them a lot though :(
 
-And they'll be optimized (or not) the same way the rest of your project is optimized :(
-
-BUILDING CROSS-PLATFORM
-=======================
-
-CMake support is included in the "cmake" directory. You will need to have zlib installed on your development platform.
-
-To build on a *NIX the first time:
-
-1. Go to the project root.
-2. mkdir build (to create a build directory)
-3. cd build (enter the directory)
-4. cmake -g"Unix Makefiles" ../cmake
-
-Once that is done, simply type "make" inside your "build" folder. The will build the rexspeeder library for your platform. You can then copy it to your project's dependencies folder, link to it with -lrexspeeder (or equivalent), and include REXSpeeder.h. Alternatively, include this as a target in your cmake file.
+And they'll be optimized (or not) the same way the rest of your project is optimized :( :(

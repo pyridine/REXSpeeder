@@ -47,14 +47,21 @@ static gzFile s_gzopen(const std::string filename, const char* permissions)
 	if (err == 0) {
 		/*Assume the file simply didn't exist.*/
 		std::string s("File " + filename + " does not exist.");
-		xp::Rexception e(s, REXSPEEDER_FILE_DOES_NOT_EXIST);
+		xp::Rexception e(s, xp::ERR_FILE_DOES_NOT_EXIST);
 		throw e;
 	}
 	xp::Rexception e(errstr, err);
 	throw e;
 }
 
+
 namespace xp {
+	//General method for ensuring an image has the correct number of layers.
+	static void enforceValidLayerCount(xp::RexImage& img) {
+		if (img.getNumLayers() < 1 || img.getNumLayers() > 4)
+			throw xp::Rexception("Invalid number of layers.", xp::ERR_INVALID_NUMBER_OF_LAYERS);
+	}
+
 //===========================================================================================================//
 //    Loading an xp file                                                                                     //
 //===========================================================================================================//
@@ -72,6 +79,8 @@ namespace xp {
 			s_gzread(gz, (vp)&num_layers, sizeof(num_layers));
 			s_gzread(gz, (vp)&width, sizeof(width));
 			s_gzread(gz, (vp)&height, sizeof(height));
+
+			enforceValidLayerCount(*this);
 
 			for (int i = 0; i < num_layers; i++)
 				layers[i] = RexLayer(width, height);
@@ -128,6 +137,8 @@ namespace xp {
 	RexImage::RexImage(int _version, int _width, int _height, int _num_layers)
 		:version(_version), width(_width), height(_height), num_layers(_num_layers)
 	{
+		enforceValidLayerCount(*this);
+
 		//All layers above the first are set transparent.
 		for (int l = 1; l < num_layers; l++) {
 			for (int i = 0; i < width*height; ++i) {
@@ -162,6 +173,7 @@ namespace xp {
 
 	bool isTransparent(RexTile * tile)
 	{
+		//This might be faster than comparing with transparentTile(), despite it being a constexpr
 		return (tile->back_red == 255 && tile->back_green == 0 && tile->back_blue == 255);
 	}	
 
