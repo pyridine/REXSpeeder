@@ -1,4 +1,4 @@
-/*For version 1.02 of REXPaint*/
+/*For version 1.03 of REXPaint*/
 #pragma once
 #include <iostream>
 #include <stdint.h>
