@@ -109,7 +109,6 @@ namespace xp {
 		try {
 			gzFile gz = s_gzopen(filename.c_str(), "wb");
 
-
 			s_gzwrite(gz, (vp)&version, sizeof(version));
 			s_gzwrite(gz, (vp)&num_layers, sizeof(num_layers));
 
@@ -136,6 +135,9 @@ namespace xp {
 		:version(_version), width(_width), height(_height)
 	{
 		layers.resize(num_layers);
+
+		for (int i = 0; i < getNumLayers(); ++i)
+			layers[i] = RexLayer(width, height);
 
 		//All layers above the first are set transparent.
 		for (int l = 1; l < getNumLayers(); l++) {
