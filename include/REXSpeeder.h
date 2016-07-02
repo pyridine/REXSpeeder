@@ -5,10 +5,6 @@
 #include <array>
 #include <vector>
 
-//There is a maximum of four layers in an .xp file
-constexpr int REXPAINT_MAX_NUM_LAYERS=4;
-
-
 namespace xp {
 	//This struct matches the order and width of data in .xp tiles.
 	struct  RexTile {
@@ -86,7 +82,7 @@ namespace xp {
 		//Image properties
 		int version;
 		int width, height, num_layers;
-		std::array<RexLayer, REXPAINT_MAX_NUM_LAYERS> layers; //layers[0] is the first layer.
+		std::vector<RexLayer> layers; //layers[0] is the first layer.
 
 		//Forbid default construction.
 		RexImage();
