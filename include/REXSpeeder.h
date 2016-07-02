@@ -52,7 +52,7 @@ namespace xp {
 
 		//Create a blank RexFile with the specified attributes.
 		//Layers above the first will be made of transparent tiles.
-		RexImage(int _version, int _width, int _height, int num_layers);
+		RexImage(int _width, int _height, int num_layers);
 
 		//Image attributes
 		inline int getVersion() { return version; };

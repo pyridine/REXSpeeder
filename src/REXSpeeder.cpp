@@ -131,8 +131,8 @@ namespace xp {
 //===========================================================================================================//
 //    Constructors / Destructors                                                                             //
 //===========================================================================================================//
-	RexImage::RexImage(int _version, int _width, int _height, int num_layers)
-		:version(_version), width(_width), height(_height)
+	RexImage::RexImage(int _width, int _height, int num_layers)
+		:version(-1),/*as of 1.03*/ width(_width), height(_height)
 	{
 		layers.resize(num_layers);
 
