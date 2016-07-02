@@ -52,13 +52,13 @@ namespace xp {
 
 		//Create a blank RexFile with the specified attributes.
 		//Layers above the first will be made of transparent tiles.
-		RexImage(int _version, int _width, int _height, int _num_layers);
+		RexImage(int _version, int _width, int _height, int num_layers);
 
 		//Image attributes
 		inline int getVersion() { return version; };
 		inline int getWidth() { return width; };
 		inline int getHeight() { return height; };
-		inline int getNumLayers() { return num_layers; };
+		inline int getNumLayers() { return layers.size(); };
 
 		//Returns a pointer to a single tile specified by layer, x coordinate, y coordinate.
 		//0,0 is the top-left corner.
@@ -81,7 +81,7 @@ namespace xp {
 	private:
 		//Image properties
 		int version;
-		int width, height, num_layers;
+		int width, height;
 		std::vector<RexLayer> layers; //layers[0] is the first layer.
 
 		//Forbid default construction.

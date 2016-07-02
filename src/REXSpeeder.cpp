@@ -65,22 +65,23 @@ namespace xp {
 		typedef void* vp;
 		//Number of bytes in a tile. Not equal to sizeof(RexTile) due to padding.
 		const int tileLen = 10; 
+		int _num_layers;
 
 		gzFile gz;
 		try {
 			gz = s_gzopen(filename.c_str(), "rb");
 
 			s_gzread(gz, (vp)&version, sizeof(version));
-			s_gzread(gz, (vp)&num_layers, sizeof(num_layers));
+			s_gzread(gz, (vp)&_num_layers, sizeof(_num_layers));
 			s_gzread(gz, (vp)&width, sizeof(width));
 			s_gzread(gz, (vp)&height, sizeof(height));
 
-			layers.resize(num_layers);
+			layers.resize(_num_layers);
 
-			for (int i = 0; i < num_layers; i++)
+			for (int i = 0; i < getNumLayers(); i++)
 				layers[i] = RexLayer(width, height);
 
-			for (int layer_index = 0; layer_index < num_layers; layer_index++) {
+			for (int layer_index = 0; layer_index < getNumLayers(); layer_index++) {
 				for (int i = 0; i < width*height; ++i)
 					s_gzread(gz, getTile(layer_index, i), tileLen);
 
@@ -103,9 +104,11 @@ namespace xp {
 		typedef void* vp;
 		//Number of bytes in a tile. Not equal to sizeof(RexTile) due to padding.
 		const int tileLen = 10; 
+		int num_layers = layers.size();
 
 		try {
 			gzFile gz = s_gzopen(filename.c_str(), "wb");
+
 
 			s_gzwrite(gz, (vp)&version, sizeof(version));
 			s_gzwrite(gz, (vp)&num_layers, sizeof(num_layers));
@@ -129,13 +132,13 @@ namespace xp {
 //===========================================================================================================//
 //    Constructors / Destructors                                                                             //
 //===========================================================================================================//
-	RexImage::RexImage(int _version, int _width, int _height, int _num_layers)
-		:version(_version), width(_width), height(_height), num_layers(_num_layers)
+	RexImage::RexImage(int _version, int _width, int _height, int num_layers)
+		:version(_version), width(_width), height(_height)
 	{
 		layers.resize(num_layers);
 
 		//All layers above the first are set transparent.
-		for (int l = 1; l < num_layers; l++) {
+		for (int l = 1; l < getNumLayers(); l++) {
 			for (int i = 0; i < width*height; ++i) {
 				RexTile t = transparentTile();
 				setTile(l, i, t);
@@ -147,19 +150,19 @@ namespace xp {
 //    Utility Functions                                                                                      //
 //===========================================================================================================//
 	void RexImage::flatten() {
-		if (num_layers == 1)
+		if (getNumLayers() == 1)
 			return;
 
 		//Paint the last layer onto the second-to-last
 		for (int i = 0; i < width*height; ++i) {
-			RexTile* overlay = getTile(num_layers - 1, i);
+			RexTile* overlay = getTile(getNumLayers() - 1, i);
 			if (!isTransparent(overlay)) {
-				*getTile(num_layers - 2, i) = *overlay;
+				*getTile(getNumLayers() - 2, i) = *overlay;
 			}
 		}
 
 		//Remove the last layer
-		--num_layers;
+		layers.pop_back();
 
 		//Recurse
 		flatten();
