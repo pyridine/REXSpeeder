@@ -20,10 +20,6 @@ static void s_gzread(gzFile g, voidp buf, unsigned int len)
 	if (gzread(g, buf, len) > 0)
 		return;
 
-	/*We expect to read past the end of the file after the last layer.*/
-	if (gzeof(g))
-		return;
-	
 	throw makeRexception(g);
 }
 
@@ -54,7 +50,6 @@ static gzFile s_gzopen(const std::string filename, const char* permissions)
 	throw e;
 }
 
-
 namespace xp {
 
 //===========================================================================================================//
@@ -62,7 +57,6 @@ namespace xp {
 //===========================================================================================================//
 	RexImage::RexImage(std::string const & filename)
 	{
-		typedef void* vp;
 		//Number of bytes in a tile. Not equal to sizeof(RexTile) due to padding.
 		const int tileLen = 10; 
 		int _num_layers;
@@ -71,24 +65,20 @@ namespace xp {
 		try {
 			gz = s_gzopen(filename.c_str(), "rb");
 
-			s_gzread(gz, (vp)&version, sizeof(version));
-			s_gzread(gz, (vp)&_num_layers, sizeof(_num_layers));
-			s_gzread(gz, (vp)&width, sizeof(width));
-			s_gzread(gz, (vp)&height, sizeof(height));
+			//Read the image attributes
+			s_gzread(gz, &version, sizeof(version));
+			s_gzread(gz, &_num_layers, sizeof(_num_layers));
 
 			layers.resize(_num_layers);
 
-			for (int i = 0; i < getNumLayers(); i++)
-				layers[i] = RexLayer(width, height);
-
-			for (int layer_index = 0; layer_index < getNumLayers(); layer_index++) {
-				for (int i = 0; i < width*height; ++i)
-					s_gzread(gz, getTile(layer_index, i), tileLen);
-
+			for (auto& layer : layers) {
 				//The layer and height information is repeated.
-				//This is expected to read off the end after the last layer.
-				s_gzread(gz, (vp)&width, sizeof(width));
-				s_gzread(gz, (vp)&height, sizeof(height));
+				s_gzread(gz, &width, sizeof(width));
+				s_gzread(gz, &height, sizeof(height));
+
+				//Read the layer tiles
+				layer = RexLayer(width, height);
+				s_gzread(gz, layer.tiles.data(), sizeof(RexTile) * width * height);
 			}
 		}
 		catch (...) { throw; }
@@ -101,25 +91,21 @@ namespace xp {
 //===========================================================================================================//
 	void RexImage::save(std::string const & filename)
 	{
-		typedef void* vp;
-		//Number of bytes in a tile. Not equal to sizeof(RexTile) due to padding.
-		const int tileLen = 10; 
 		int num_layers = layers.size();
 
 		try {
 			gzFile gz = s_gzopen(filename.c_str(), "wb");
 
-			s_gzwrite(gz, (vp)&version, sizeof(version));
-			s_gzwrite(gz, (vp)&num_layers, sizeof(num_layers));
+			s_gzwrite(gz, &version, sizeof(version));
+			s_gzwrite(gz, &num_layers, sizeof(num_layers));
 
-			for (int layer = 0; layer < num_layers; ++layer) {
-				s_gzwrite(gz, (vp)&width, sizeof(width));
-				s_gzwrite(gz, (vp)&height, sizeof(height));
+			for (auto& layer : layers) {
+				//The layer and height information is repeated.
+				s_gzwrite(gz, &width, sizeof(width));
+				s_gzwrite(gz, &height, sizeof(height));
 
-				for (int i = 0; i < width*height; ++i) 
-					//Note: not "sizeof(RexTile)" because of padding.
-					s_gzwrite(gz, (vp)getTile(layer,i), tileLen);
-				
+				//Write the layer tiles
+				s_gzwrite(gz, layer.tiles.data(), sizeof(RexTile) * width * height);
 			}
 
 			gzflush(gz, Z_FULL_FLUSH);

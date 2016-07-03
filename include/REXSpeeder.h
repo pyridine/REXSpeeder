@@ -7,9 +7,10 @@
 
 namespace xp {
 	//This struct matches the order and width of data in .xp tiles.
+	//Assumes little-endian format.
 	struct  RexTile {
-		//I don't know why a CP437 character should be 4 bytes wide, but thus sprach the manual.
-		uint32_t  character;
+		uint8_t character;
+		std::array<uint8_t, 3> __padding; //Do not use. Accounts for the unused final 3 bytes in .xp tile characters (v 1.03).
 		uint8_t fore_red;
 		uint8_t fore_green;
 		uint8_t fore_blue;
@@ -62,11 +63,11 @@ namespace xp {
 
 		//Returns a pointer to a single tile specified by layer, x coordinate, y coordinate.
 		//0,0 is the top-left corner.
-		inline RexTile* getTile(int layer, int x, int y) { return &layers[layer].tiles[y + (x * height)]; };
+		inline RexTile* getTile(int layer, int x, int y) { return &layers.at(layer).tiles.at(y + (x * height)); };
 
 		//Returns a pointer to a single tile specified by layer and the actual index into the array.
 		//Useful for iterating through a whole layer in one go for coordinate-nonspecific tasks.
-		inline RexTile* getTile(int layer, int index) { return &layers[layer].tiles[index]; };
+		inline RexTile* getTile(int layer, int index) { return &layers.at(layer).tiles.at(index); };
 
 		//Replaces the data for a tile. Not super necessary, but might save you a couple lines.
 		inline void setTile(int layer, int x, int y, RexTile& val) { *getTile(layer, x, y) = val; };

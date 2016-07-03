@@ -35,7 +35,7 @@ int main() {
 
 
 	/*The following functions test how long it takes to save and load.*/
-#define TESTING_TIME 0
+#define TESTING_TIME 1
 #if TESTING_TIME
 	/*These files are 10x10, 20x20, etc.*/
 	testTime("files\\10");
